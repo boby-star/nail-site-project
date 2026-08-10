@@ -1,0 +1,5 @@
+import { z } from "zod";
+const safeUrl=z.string().url().refine(v=>["http:","https:","mailto:","tg:"].includes(new URL(v).protocol),"Посилання має небезпечний протокол");
+export type RichNode={type:string;attrs?:Record<string,unknown>;content?:RichNode[];text?:string};
+export const richDocumentSchema:z.ZodType<RichNode>=z.lazy(()=>z.object({type:z.enum(["doc","paragraph","heading","bulletList","orderedList","listItem","blockquote","link","image","table","tableRow","tableCell","horizontalRule","codeBlock","callout","telegramCta","statistics","calculator","faq","text"]),text:z.string().max(20000).optional(),attrs:z.record(z.string(),z.unknown()).optional(),content:z.array(richDocumentSchema).max(1000).optional()}).superRefine((node,ctx)=>{if(node.type==="link"&&typeof node.attrs?.href==="string"&&!safeUrl.safeParse(node.attrs.href).success)ctx.addIssue({code:"custom",message:"Небезпечне посилання"});}));
+export const emptyDocument:RichNode={type:"doc",content:[{type:"paragraph",content:[]}]};

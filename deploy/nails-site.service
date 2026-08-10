@@ -1,0 +1,23 @@
+[Unit]
+Description=Nailory — українська nail-медіаплатформа
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=nails
+Group=nails
+WorkingDirectory=/var/www/nails-site
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/nails-site/site.env
+ExecStart=/usr/bin/node .next/standalone/server.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/nails-site/public/uploads
+
+[Install]
+WantedBy=multi-user.target

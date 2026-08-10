@@ -1,0 +1,4 @@
+import type { Metadata } from "next"; import { Inter,Pinyon_Script } from "next/font/google"; import "./globals.css";
+const inter=Inter({subsets:["latin","cyrillic"],weight:["300","400","500"],variable:"--font-inter",display:"swap"}); const pinyon=Pinyon_Script({subsets:["latin"],weight:"400",variable:"--font-pinyon",display:"swap"});
+export const metadata:Metadata={metadataBase:new URL(process.env.APP_URL??"http://localhost:3000"),title:{default:"Nailory — знання для майстрів",template:"%s — Nailory"},description:"Практичні матеріали про манікюр, догляд і розвиток beauty-бізнесу.",alternates:{canonical:"/"},openGraph:{locale:"uk_UA",type:"website"}};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="uk"><body className={`${inter.variable} ${pinyon.variable}`}>{children}</body></html>}
