@@ -1,0 +1,7 @@
+import { z } from "zod"; import { richDocumentSchema } from "./content";
+export const slugSchema=z.string().min(1).max(220).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/,"Використовуйте латинські літери, цифри та дефіси");
+export const loginSchema=z.object({username:z.string().trim().toLowerCase().min(3).max(64).regex(/^[a-z0-9._-]+$/),password:z.string().min(12).max(256)});
+export const postSchema=z.object({title:z.string().trim().min(1).max(200),h1:z.string().trim().min(1).max(200),slug:slugSchema,excerpt:z.string().trim().min(1).max(1000),type:z.enum(["ARTICLE","CITY_PAGE","LANDING","STATISTICS","TOOL","AI_TOOL","GUIDE"]),content:richDocumentSchema});
+export const seoSchema=z.object({metaTitle:z.string().max(300).nullable(),metaDescription:z.string().max(500).nullable(),canonicalUrl:z.string().url().nullable(),robotsIndex:z.boolean(),robotsFollow:z.boolean(),maxSnippet:z.number().int().min(-1),maxImagePreview:z.enum(["none","standard","large"]),sitemapEnabled:z.boolean(),schemaType:z.enum(["Article","WebPage","SoftwareApplication","WebApplication"])});
+const map:Record<string,string>={а:"a",б:"b",в:"v",г:"h",ґ:"g",д:"d",е:"e",є:"ye",ж:"zh",з:"z",и:"y",і:"i",ї:"yi",й:"i",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"kh",ц:"ts",ч:"ch",ш:"sh",щ:"shch",ь:"",ю:"yu",я:"ya"};
+export function slugifyUk(value:string){return value.toLowerCase().split("").map(c=>map[c]??c).join("").normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,220)}
