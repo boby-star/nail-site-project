@@ -19,8 +19,7 @@
     "admin:passwd": "tsx src/scripts/admin/manage.ts passwd",
     "admin:disable": "tsx src/scripts/admin/manage.ts disable",
     "admin:enable": "tsx src/scripts/admin/manage.ts enable",
-    "admin:list": "tsx src/scripts/admin/manage.ts list",
-    "deploy:prepare": "node scripts/prepare-standalone.mjs"
+    "admin:list": "tsx src/scripts/admin/manage.ts list"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

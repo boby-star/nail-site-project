@@ -1,0 +1,12 @@
+.git
+.gitignore
+.next
+node_modules
+.env
+.env.*
+!.env.example
+*.log
+coverage
+deploy
+README.md
+tsconfig.tsbuildinfo
