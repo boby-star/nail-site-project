@@ -1,0 +1,32 @@
+[Unit]
+Description=Nailory — українська nail-медіаплатформа
+After=network-online.target postgresql.service redis-server.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=nails
+Group=nails
+WorkingDirectory=/var/www/nails-site
+Environment=NODE_ENV=production
+Environment=HOSTNAME=127.0.0.1
+Environment=PORT=3000
+Environment=NEXT_TELEMETRY_DISABLED=1
+EnvironmentFile=/etc/nails-site/site.env
+ExecStart=/usr/bin/node .next/standalone/server.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+ReadWritePaths=/var/www/nails-site/public/uploads /var/www/nails-site/.next/standalone/.next/cache
+
+[Install]
+WantedBy=multi-user.target
