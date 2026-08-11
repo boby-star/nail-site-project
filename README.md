@@ -6,7 +6,6 @@ Production-ready SEO-first медіаплатформа українською: 
 
 - Node.js 20 LTS або новіший LTS, pnpm 10;
 - PostgreSQL 15+ і Redis 7+, доступні лише у приватній мережі/localhost;
-- `libvips` для обробки зображень через Sharp.
 
 ```bash
 cp .env.example .env
@@ -40,7 +39,6 @@ $ pnpm admin:create --username admin
 | `JWT_ISSUER`, `JWT_AUDIENCE` | обмеження JWT |
 | `AUTH_ACCESS_TTL`, `AUTH_REFRESH_TTL` | TTL у секундах |
 | `MEDIA_DIR` | каталог завантажень |
-| `TELEGRAM_BOT_URL` | Telegram deep link |
 | `SERVER_ACTION_ALLOWED_ORIGINS` | дозволені host-и через кому |
 
 ## База даних
@@ -64,7 +62,7 @@ pnpm build
 NODE_ENV=production pnpm start
 ```
 
-Standalone-розгортання потребує копіювання `.next/standalone`, `.next/static` та `public`. Процес пише логи у stdout/stderr, доступні через `journalctl`.
+Після `pnpm build` команда `pnpm deploy:prepare` готує `.next/standalone` разом зі статичними файлами та `public`. Процес пише логи у stdout/stderr, доступні через `journalctl`.
 
 ## systemd і Nginx
 
@@ -91,8 +89,39 @@ TLS сертифікати та Cloudflare real-IP policy налаштовуют
 - Drizzle параметризує запити; structured JSON renderer не приймає HTML чи небезпечні URL;
 - Redis rate limit деградує без падіння публічного сайту;
 - CSP, HSTS на HTTPS-рівні, noindex admin, `lang=uk`, SSR, canonical, OpenGraph, JSON-LD, sitemap та crawler-driven robots;
-- медіа приймаються лише після MIME/decode/re-encode перевірки; SVG вимкнено.
 
 ## Межі першого релізу
 
 Схема й безпекові межі готові для TipTap, media pipeline, revision diff/restore та повних CMS-форм. Візуальний TipTap editor, фонові черги, AI provider і bulk operations свідомо не є core dependency та підключаються окремими інкрементами. Немає crawler-only контенту або cloaking.
+
+## Перший production-запуск і діагностика
+
+Міграції зберігаються в Git, тому на сервері не запускайте `db:generate`. Після `git pull` виконайте:
+
+```bash
+cd /var/www/nails-site
+set -a; source /etc/nails-site/site.env; set +a
+pnpm install --frozen-lockfile
+pnpm db:migrate
+pnpm admin:create --username admin
+pnpm typecheck && pnpm lint && pnpm test && pnpm build
+pnpm deploy:prepare
+sudo install -m 644 deploy/nails-site.service /etc/systemd/system/nails-site.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now nails-site
+```
+
+Якщо міграція завершується лише повідомленням `exit code 1`, запустіть її з явним env і перевірте доступ до БД:
+
+```bash
+sudo -u nails env DATABASE_URL="$DATABASE_URL" pnpm exec drizzle-kit migrate --config=drizzle.config.ts --verbose
+sudo -u nails env PGPASSWORD='ПАРОЛЬ' psql -h 127.0.0.1 -U nails_app -d nails_site -c 'select 1'
+```
+
+CLI не використовує top-level await і сумісний з CJS-режимом `tsx`. Команда має запускатися в інтерактивному SSH-терміналі. Для systemd перевіряйте:
+
+```bash
+sudo systemctl status nails-site --no-pager
+sudo journalctl -u nails-site -n 100 --no-pager
+curl --fail http://127.0.0.1:3000/health
+```

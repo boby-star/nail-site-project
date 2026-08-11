@@ -1,2 +1,3 @@
 import type { MetadataRoute } from "next";import { db } from "@/db";import { crawlerPolicies } from "@/db/schema";
+export const dynamic="force-dynamic";
 export default async function robots():Promise<MetadataRoute.Robots>{const policies=await db.select().from(crawlerPolicies);const rules=policies.length?policies.map(p=>({userAgent:p.crawler,allow:p.allow?(p.paths.length?p.paths:"/"):undefined,disallow:p.allow?"/admin/":(p.paths.length?p.paths:"/")})):[{userAgent:"*",allow:"/",disallow:"/admin/"}];return {rules,sitemap:`${process.env.APP_URL}/sitemap.xml`,host:process.env.APP_URL}}

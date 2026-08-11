@@ -7,3 +7,5 @@ public/uploads/*
 !public/uploads/.gitkeep
 coverage
 *.log
+
+tsconfig.tsbuildinfo
