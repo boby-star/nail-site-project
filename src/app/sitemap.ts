@@ -1,0 +1,3 @@
+import type { MetadataRoute } from "next";import { and,eq,isNull } from "drizzle-orm";import { db } from "@/db";import { posts,postSeo } from "@/db/schema";
+export const dynamic="force-dynamic";
+export default async function sitemap():Promise<MetadataRoute.Sitemap>{const base=process.env.APP_URL!;const list=await db.select({slug:posts.slug,updatedAt:posts.updatedAt}).from(posts).innerJoin(postSeo,eq(postSeo.postId,posts.id)).where(and(eq(posts.status,"PUBLISHED"),isNull(posts.deletedAt),eq(postSeo.sitemapEnabled,true),eq(postSeo.robotsIndex,true)));return [{url:base,lastModified:new Date()},{url:`${base}/statti`,lastModified:new Date()},...list.map(p=>({url:`${base}/statti/${p.slug}`,lastModified:p.updatedAt}))]}
