@@ -1,0 +1,13 @@
+.next
+node_modules
+.env
+.env.*
+!.env.example
+public/uploads/*
+!public/uploads/.gitkeep
+coverage
+*.log
+
+tsconfig.tsbuildinfo
+deploy/.env
+deploy/app.env

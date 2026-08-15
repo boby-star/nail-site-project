@@ -1,0 +1,4 @@
+import type { Metadata } from "next";import Link from "next/link";import { PublicShell } from "@/components/public/shell";import { publishedPosts } from "@/modules/posts/queries";
+export const dynamic="force-dynamic";
+export const metadata:Metadata={title:"Статті",description:"Практичні статті для nail-майстрів і всіх, хто дбає про красу рук.",alternates:{canonical:"/statti"}};
+export default async function Page(){const items=await publishedPosts();return <PublicShell><div className="container section"><span className="eyebrow">Бібліотека знань</span><h1 className="page-title">Статті</h1>{items.length?<div className="grid">{items.map(p=><article className="card" key={p.id}><span className="eyebrow">{p.type==="GUIDE"?"Посібник":"Матеріал"}</span><h2><Link href={`/statti/${p.slug}`}>{p.title}</Link></h2><p>{p.excerpt}</p></article>)}</div>:<p>Статей поки немає.</p>}</div></PublicShell>}

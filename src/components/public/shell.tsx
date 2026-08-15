@@ -1,0 +1,2 @@
+import Link from "next/link";
+export function PublicShell({children}:{children:React.ReactNode}){return <><header className="container site-header"><Link className="logo" href="/">Nailory</Link><nav className="nav" aria-label="Головна навігація"><Link href="/statti">Статті</Link><Link href="/mista">Міста</Link><Link href="/maistra">Майстрам</Link><Link href="/instrumenty">Інструменти</Link></nav></header><main>{children}</main><footer className="container footer">© {new Date().getFullYear()} Nailory · Практичні знання українською</footer></>}
