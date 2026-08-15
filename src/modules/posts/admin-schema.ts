@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { slugSchema } from "@/lib/validation/forms";
-import type { RichNode } from "@/lib/validation/content";
+import { slugSchema } from "../../lib/validation/forms";
+import type { RichNode } from "../../lib/validation/content";
 
 export const adminPostSchema = z.object({
   id: z.string().uuid().optional(),

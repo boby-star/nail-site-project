@@ -168,6 +168,21 @@ curl -I https://example.com
 
 Не використовуйте `docker compose down -v` у production: параметр `-v` видалить volumes із БД та медіа.
 
+### Якщо новий image не зібрався
+
+`docker compose up -d` не замінює контейнер, якщо попередній `docker compose build` завершився помилкою. У такому випадку старий healthy-контейнер може продовжувати працювати. Спочатку виправте build, потім виконайте:
+
+```bash
+git pull --ff-only
+cd deploy
+docker compose build --pull app migrate
+docker compose up -d --remove-orphans
+docker compose ps
+docker compose logs --tail=100 app
+```
+
+Повідомлення `Server Reference ID did not match` зазвичай створює некоректний зовнішній POST із підробленим `Next-Action`. Middleware відхиляє такі заголовки зі статусом 400 до обробки Next.js. Помилка Redis під час короткого restart більше не створює unhandled event: клієнт має обробник помилок, обмежений timeout і автоматичне перепідключення, а публічний сайт не залежить від Redis.
+
 ## Локальна розробка без Docker
 
 ```bash
