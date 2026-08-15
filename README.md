@@ -99,6 +99,22 @@ docker compose --profile tools run --rm admin admin:disable --username admin
 docker compose --profile tools run --rm admin admin:enable --username admin
 ```
 
+## Керування статтями
+
+Після входу на `https://example.com/admin/login` відкрийте **Статті → Створити статтю**. Редактор підтримує:
+
+- окремі службову назву, H1, slug, excerpt, тип матеріалу та структурований текст;
+- заголовки `##` / `###`, абзаци та марковані списки без raw HTML;
+- категорії та міста;
+- SEO title, meta description із лічильниками, canonical, robots, sitemap і schema type;
+- OpenGraph title/description та головне зображення;
+- server-side preview чернетки;
+- чернетку, публікацію, зняття з публікації, архів, кошик і відновлення;
+- автоматичний 301 redirect після зміни slug опублікованої статті;
+- revision snapshot після кожного збереження.
+
+Зображення спочатку завантажуються в розділі **Медіа**. Дозволено JPEG/PNG до 10 МБ; сервер перевіряє сигнатуру та розміри, генерує випадкове filesystem-ім’я і вимагає alt-текст. Комбінація `Ctrl/Cmd + S` зберігає форму редактора.
+
 ## Nginx
 
 Замініть домен у `deploy/nginx.conf`, додайте TLS certificate directives через Certbot, після чого:
